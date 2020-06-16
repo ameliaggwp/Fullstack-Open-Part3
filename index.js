@@ -3,6 +3,12 @@ const app = express();
 
 app.use(express.json());
 
+const generateId = () => {
+  const id = Math.floor(Math.random() * 1000);
+
+  return id;
+};
+
 let persons = [
   {
     name: "Harry Potter",
@@ -49,6 +55,27 @@ app.get("/info", (req, res) => {
       date +
       "</div>"
   );
+});
+
+app.post("/api/persons", (req, res) => {
+  const body = req.body;
+  console.log(body);
+
+  if (!body.name) {
+    return res.status(400).json({
+      error: "Content missing",
+    });
+  }
+
+  const person = {
+    name: body.name,
+    number: body.number,
+    id: generateId(),
+  };
+
+  persons = persons.concat(person);
+
+  res.json(persons);
 });
 
 app.delete("/api/persons/:id", (req, res) => {
