@@ -1,0 +1,27 @@
+{
+  "name": "part3-exercises",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ameliaggwp/Fullstack-Open-Part3.git"
+  },
+  "author": "Lia",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ameliaggwp/Fullstack-Open-Part3/issues"
+  },
+  "homepage": "https://github.com/ameliaggwp/Fullstack-Open-Part3#readme"
+}
