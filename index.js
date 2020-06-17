@@ -59,11 +59,17 @@ app.get("/info", (req, res) => {
 
 app.post("/api/persons", (req, res) => {
   const body = req.body;
-  console.log(body);
+  const duplicate = persons.find((person) => person.name === body.name);
 
-  if (!body.name) {
+  if (!body.name || !body.number) {
     return res.status(400).json({
-      error: "Content missing",
+      error: "Name or number missing",
+    });
+  }
+
+  if (duplicate) {
+    return res.status(403).json({
+      error: "Name must be unique",
     });
   }
 
