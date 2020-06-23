@@ -7,10 +7,6 @@ if (process.argv.length < 3) {
   process.exit(1);
 }
 
-const password = process.argv[2];
-
-const url = `mongodb+srv://liadev:${password}@fullstack1-d38wx.mongodb.net/phonebook-app?retryWrites=true&w=majority`;
-
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const personSchema = new mongoose.Schema({
