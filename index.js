@@ -34,6 +34,26 @@ app.get("/api/persons/:id", (req, res, next) => {
     .catch((error) => next(error));
 });
 
+app.get("/info", (req, res) => {
+  const date = new Date();
+  Person.find({}).then((people) => {
+    let totalNumbers = people.length;
+    if (totalNumbers) {
+      res.send(
+        "<div>Phonebook has info for " +
+          totalNumbers +
+          " people </div><br><div>" +
+          date +
+          "</div>"
+      );
+    } else {
+      res.send(
+        "<div>Phonebook has info for 0 people </div><br><div>" + date + "</div>"
+      );
+    }
+  });
+});
+
 app.post("/api/persons", (req, res) => {
   const body = req.body;
 
