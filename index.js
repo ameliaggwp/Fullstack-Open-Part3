@@ -7,18 +7,13 @@ const Person = require("./models/person");
 const cors = require("cors");
 
 app.use(cors());
-app.use(express.json());
-app.use(express.static("build"));
 
+app.use(express.static("build"));
+app.use(express.json());
 app.use(morgan(":method :url :status :postContent"));
 
 morgan.token("postContent", function getPostContent(req) {
   return JSON.stringify(req.body);
-});
-
-const PORT = process.env.PORT;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
 });
 
 app.get("/api/persons", (req, res) => {
@@ -27,25 +22,18 @@ app.get("/api/persons", (req, res) => {
   });
 });
 
-app.get("/api/persons/:id", (req, res) => {
-  Person.findById(req.params.id).then((person) => {
-    res.json(person);
-  });
+app.get("/api/persons/:id", (req, res, next) => {
+  Person.findById(req.params.id)
+    .then((person) => {
+      if (person) {
+        res.json(person);
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 
-/*
-app.get("/info", (req, res) => {
-  const totalNumbers = persons.length;
-  const date = new Date();
-  res.send(
-    "<div>Phonebook has info for " +
-      totalNumbers +
-      " people</div><br><div>" +
-      date +
-      "</div>"
-  );
-});
-*/
 app.post("/api/persons", (req, res) => {
   const body = req.body;
 
@@ -65,9 +53,30 @@ app.post("/api/persons", (req, res) => {
   });
 });
 
-app.delete("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  persons = persons.filter((person) => person.id !== id);
+app.delete("/api/persons/:id", (req, res, next) => {
+  Person.findByIdAndRemove(req.params.id)
+    .then((result) => {
+      res.status(204).end();
+    })
+    .catch((error) => next(error));
+});
 
-  res.status(204).end();
+const unknownEndpoint = (req, res) => {
+  res.stats(404).send({ error: "unknown endpoint" });
+};
+
+app.use(unknownEndpoint);
+
+const errorHandler = (error, req, res, next) => {
+  if (error.name === "CastError") {
+    return res.status(400).send({ error: "malformatted id" });
+  }
+  next(error);
+};
+
+app.use(errorHandler);
+
+const PORT = process.env.PORT;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
