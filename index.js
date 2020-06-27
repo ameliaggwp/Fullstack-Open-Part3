@@ -53,6 +53,21 @@ app.post("/api/persons", (req, res) => {
   });
 });
 
+app.put("/api/persons/:id", (req, res, next) => {
+  const body = req.body;
+
+  const person = {
+    name: body.name,
+    number: body.number,
+  };
+
+  Person.findByIdAndUpdate(req.params.id, person, { new: true })
+    .then((updatedPerson) => {
+      res.json(updatedPerson);
+    })
+    .catch((error) => next(error));
+});
+
 app.delete("/api/persons/:id", (req, res, next) => {
   Person.findByIdAndRemove(req.params.id)
     .then((result) => {
@@ -62,7 +77,7 @@ app.delete("/api/persons/:id", (req, res, next) => {
 });
 
 const unknownEndpoint = (req, res) => {
-  res.stats(404).send({ error: "unknown endpoint" });
+  res.status(404).send({ error: "unknown endpoint" });
 };
 
 app.use(unknownEndpoint);
