@@ -1,15 +1,15 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
-
-require("dotenv").config();
 const morgan = require("morgan");
 const Person = require("./models/person");
 const cors = require("cors");
+const bodyParser = require("body-parser");
 
 app.use(cors());
 
 app.use(express.static("build"));
-app.use(express.json());
+app.use(bodyParser.json());
 app.use(morgan(":method :url :status :postContent"));
 
 morgan.token("postContent", function getPostContent(req) {
@@ -54,23 +54,21 @@ app.get("/info", (req, res) => {
   });
 });
 
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", (req, res, next) => {
   const body = req.body;
-
-  if (!body.name || !body.number) {
-    return res.status(400).json({
-      error: "Name or number missing",
-    });
-  }
 
   const person = new Person({
     name: body.name,
     number: body.number,
   });
 
-  person.save().then((savedPerson) => {
-    res.json(savedPerson);
-  });
+  person
+    .save()
+    .then((savedPerson) => savedPerson.toJSON())
+    .then((savedFormattedPerson) => {
+      res.json(savedFormattedPerson);
+    })
+    .catch((error) => next(error));
 });
 
 app.put("/api/persons/:id", (req, res, next) => {
@@ -105,6 +103,11 @@ app.use(unknownEndpoint);
 const errorHandler = (error, req, res, next) => {
   if (error.name === "CastError") {
     return res.status(400).send({ error: "malformatted id" });
+  }
+  if (error.name === "ValidatorError") {
+    return res
+      .status(400)
+      .send({ error: "Error, expected `username` to be unique." });
   }
   next(error);
 };
