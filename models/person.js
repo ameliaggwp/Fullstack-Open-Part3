@@ -18,12 +18,14 @@ mongoose
 const personSchema = new mongoose.Schema({
   name: {
     type: String,
+    minlength: [3, "Name must be at least 3 characters."],
     unique: true,
-    required: true,
+    required: [true, "Must enter a name"],
   },
   number: {
     type: String,
-    required: true,
+    minlength: [8, "Must enter 8 numbers"],
+    required: [true, "Must enter a number"],
   },
 });
 
