@@ -103,11 +103,8 @@ app.use(unknownEndpoint);
 const errorHandler = (error, req, res, next) => {
   if (error.name === "CastError") {
     return res.status(400).send({ error: "malformatted id" });
-  }
-  if (error.name === "ValidatorError") {
-    return res
-      .status(400)
-      .send({ error: "Error, expected `username` to be unique." });
+  } else if (error.name === "ValidatorError") {
+    return res.status(400).json({ error: error.message });
   }
   next(error);
 };
