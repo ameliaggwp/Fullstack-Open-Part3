@@ -18,7 +18,7 @@ mongoose
 const personSchema = new mongoose.Schema({
   name: {
     type: String,
-    minlength: [3, "Name must be at least 3 characters."],
+    minlength: [3, "Name must be at least 3 characters"],
     unique: true,
     required: [true, "Must enter a name"],
   },
@@ -29,8 +29,6 @@ const personSchema = new mongoose.Schema({
   },
 });
 
-personSchema.plugin(uniqueValidator);
-
 personSchema.set("toJSON", {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString();
@@ -38,5 +36,7 @@ personSchema.set("toJSON", {
     delete returnedObject.__v;
   },
 });
+
+personSchema.plugin(uniqueValidator);
 
 module.exports = mongoose.model("Person", personSchema);
