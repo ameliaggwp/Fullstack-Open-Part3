@@ -1,15 +1,15 @@
-require("dotenv").config();
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
+require("dotenv").config();
 const Person = require("./models/person");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
 app.use(cors());
-
-app.use(express.static("build"));
 app.use(bodyParser.json());
+app.use(express.static("build"));
+
 app.use(morgan(":method :url :status :postContent"));
 
 morgan.token("postContent", function getPostContent(req) {
@@ -79,11 +79,7 @@ app.put("/api/persons/:id", (req, res, next) => {
     number: body.number,
   };
 
-  Person.findByIdAndUpdate(req.params.id, person, {
-    runValidators: true,
-    context: "query",
-    new: true,
-  })
+  Person.findByIdAndUpdate({ _id: `${req.params.id}` }, person, { new: true })
     .then((updatedPerson) => {
       res.json(updatedPerson);
     })
